@@ -19,7 +19,7 @@ for mail in newmails:
 		# get image
 		cmd = "munpack " + mail
 		os.system(cmd)
-		images = glob.glob("*.jpg")
+		images = glob.glob("*.jpg") + glob.glob("*.JPG") + glob.glob("*.png") + glob.glob("*.PNG")
 		# if image then process
 		if len(images) > 0:
 			cmd = "python scan.py --image " + images[0]
