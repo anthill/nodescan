@@ -24,9 +24,17 @@ for mail in newmails:
 		if len(images) > 0:
 			cmd = "python scan.py --image " + images[0]
 			os.system(cmd)
-		# send back
+			# send back
+			cmd = "mutt -s 'Your scanned image' -i message.txt " + sender +  "-a ~/scanMail/new/*.jpg < /dev/nul"
+			os.system(cmd)
+		else:
+			# send back an error mail
+			cmd = "mutt -s 'No image to scan' -i message_error.txt " + sender +  " < /dev/nul"
+			os.system(cmd)
+		
 
 		# clean
+		call(["mv *.nodepi ../cur"])
 		call(["rm *.jpg",])
 		call(["rm part*"])
 		call(["rm "+mail,])
