@@ -25,16 +25,16 @@ for mail in newmails:
 			cmd = "python scan.py --image " + images[0]
 			os.system(cmd)
 			# send back
-			cmd = "mutt -s 'Your scanned image' -i message.txt " + sender +  "-a ~/scanMail/new/*.jpg < /dev/nul"
+			cmd = "mutt -s 'Your scanned image' -i message_ok.txt " + sender +  "-a *.jpg < /dev/null"
 			os.system(cmd)
 		else:
 			# send back an error mail
-			cmd = "mutt -s 'No image to scan' -i message_error.txt " + sender +  " < /dev/nul"
+			cmd = "mutt -s 'No image to scan' -i message_error.txt " + sender +  " < /dev/null"
 			os.system(cmd)
 		
 
 		# clean
-		call(["mv *.nodepi ../cur"])
+		call(["mv ~/scanMail/new/*.nodepi ~/scanMail/cur"])
 		call(["rm *.jpg",])
 		call(["rm part*"])
 		call(["rm "+mail,])
