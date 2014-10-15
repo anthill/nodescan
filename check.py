@@ -8,7 +8,7 @@ from subprocess import call
 
 call(["getmail",])
 
-newmails = glob.glob("/home/pi/mail/new/*.nodepi")
+newmails = glob.glob("/home/pi/scanMail/new/*.nodepi")
 
 for mail in newmails:
 	try:
