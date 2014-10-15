@@ -1,6 +1,9 @@
 # USAGE
 # python scan.py --image images/page.jpg 
 
+import matplotlib
+matplotlib.use('Agg')
+
 # import the necessary packages
 from pyimagesearch.transform import four_point_transform
 from pyimagesearch import imutils
