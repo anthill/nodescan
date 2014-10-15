@@ -35,8 +35,9 @@ for mail in newmails:
 		
 
 		# clean
-		os.remove(mail)
-		call(["rm -f *.JPG *.desc *.pdf",])
+		#os.remove(mail)
+		call(["rm", "-f", "*.JPG"])
+		call(["rm", "-f", "*.desc"])
 		#call(["rm part*"])
 		#call(["rm "+mail,])
 
