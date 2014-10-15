@@ -25,7 +25,7 @@ for mail in newmails:
 			cmd = "python scan.py --image " + images[0]
 			os.system(cmd)
 			# send back
-			cmd = "mutt -s 'Your scanned image' -i message_ok.txt " + sender +  "-a *.jpg < /dev/null"
+			cmd = "mutt -s 'Your scanned image' -i message_ok.txt " + sender +  " -a *.pdf < /dev/null"
 			os.system(cmd)
 		else:
 			# send back an error mail
