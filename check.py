@@ -34,8 +34,8 @@ for mail in newmails:
 		
 
 		# clean
-		#call(["mv ~/scanMail/new/*.nodepi ~/scanMail/cur"])
-		#call(["rm *.jpg *.JPG *.png *.PNG",])
+		call(["mv ~/scanMail/new/*.nodepi ~/scanMail/cur/"])
+		call(["rm -f *.jpg *.JPG *.png *.PNG *.desc *.pdf",])
 		#call(["rm part*"])
 		#call(["rm "+mail,])
 
