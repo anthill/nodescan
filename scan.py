@@ -32,6 +32,7 @@ gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
 gray = cv2.GaussianBlur(gray, (5, 5), 0)
 edged = cv2.Canny(gray, 75, 200)
 
+print("Step 1")
 
 # find the contours in the edged image, keeping only the
 # largest ones, and initialize the screen contour
@@ -51,9 +52,13 @@ for c in cnts:
 		break
 
 
+print("Step 2")
+
 # apply the four point transform to obtain a top-down
 # view of the original image
 warped = four_point_transform(orig, screenCnt.reshape(4, 2) * ratio)
+
+print("Step 3")
 
 # convert the warped image to grayscale, then threshold it
 # to give it that 'black and white' paper effect
@@ -64,7 +69,7 @@ warped = warped.astype("uint8") * 255
 final = imutils.resize(warped, height = 650)
 
 
-
+print("Step 4")
 
 fig = plt.figure(frameon=False)
 fig.set_size_inches(8.27, 11.69)
@@ -73,5 +78,6 @@ ax.set_axis_off()
 fig.add_axes(ax)
 ax.imshow(final, aspect='normal', cmap = cm.gray)
 
+print("Step 5")
 
 plt.savefig("out.pdf", dpi=800, format='pdf')
