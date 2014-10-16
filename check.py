@@ -23,7 +23,7 @@ for mail in newmails:
 		os.system("cd ")
 		cmd = "munpack -C ~/nodescan " + mail
 		os.system(cmd)
-		images = glob.glob(scandir + "*.jpg") + glob.glob(scandir + "*.JPG") + glob.glob(scandir + "*.png") + glob.glob(scandir + "*.PNG")
+		images = glob.glob("~/nodescan/*.jpg") + glob.glob("~/nodescan/*.JPG")
 		# if image then process
 		if len(images) > 0:
 			returncode = check_call(["python", scandir + "scan.py", "--image", images[0]])
@@ -45,7 +45,7 @@ for mail in newmails:
 
 		# clean
 		os.remove(mail)
-		os.system("rm -f ~/nodescan/*.JPG ~/nodescan/*.jpg ~/nodescan/*.PNG ~/nodescan/*.png ~/nodescan/*.desc ~/nodescan/*.pdf")
+		os.system("rm -f ~/nodescan/*.JPG ~/nodescan/*.jpg ~/nodescan/*.desc ~/nodescan/*.pdf")
 		os.system("rm -f ~/scanMail/sent/cur/*")
 		#call(["rm part*"])
 		#call(["rm "+mail,])
