@@ -11,7 +11,7 @@ from subprocess import check_call
 call(["getmail",])
 
 newmails = glob.glob("/home/pi/scanMail/new/*.nodepi")
-scandir = "~/nodescan/"
+scandir = "/home/pi/nodescan/"
 
 for mail in newmails:
 	try:
@@ -20,33 +20,32 @@ for mail in newmails:
   			first_line = f.readline()
   			sender = re.search("<([\w\-][\w\-\.]+@[\w\-][\w\-\.]+[a-zA-Z]{1,4})>", first_line).group(1)
 		# get image
-		os.system("cd ")
-		cmd = "munpack -C ~/nodescan " + mail
+		cmd = "munpack -C /home/pi/nodescan " + mail
 		os.system(cmd)
-		images = glob.glob("~/nodescan/*.jpg") + glob.glob("~/nodescan/*.JPG")
+		images = glob.glob("/home/pi/nodescan/*.jpg") + glob.glob("/home/pi/nodescan/*.JPG")
 		# if image then process
 		if len(images) > 0:
 			returncode = check_call(["python", scandir + "scan.py", "--image", images[0]])
 			if returncode == 0:
 				# send back the ok message with the file attached
-				cmd = "mutt -s 'Voila ton scan !' -i ~/nodescan/ok_msg.txt " + sender +  " -a *.pdf < /dev/null"
+				cmd = "mutt -s 'Voila ton scan !' -i /home/pi/nodescan/ok_msg.txt " + sender +  " -a /home/pi/*.pdf < /dev/null"
 				os.system(cmd)
 			else:
 				# the image was not correctly processed
 				# send back the "file not processed" error message
-				cmd = "mutt -s 'Elle est moche ta photo' -i ~/nodescan/error_process_msg.txt " + sender +  " < /dev/null"
+				cmd = "mutt -s 'Elle est moche ta photo' -i /home/pi/nodescan/error_process_msg.txt " + sender +  " < /dev/null"
 				os.system(cmd)			
 		else:
 			# there is no image to process
 			# send back the "no image attached" error message
-			cmd = "mutt -s 'Euh, elle est ou ton image ?' -i ~/nodescan/error_empty_msg.txt " + sender +  " < /dev/null"
+			cmd = "mutt -s 'Euh, elle est ou ton image ?' -i /home/pi/nodescan/error_empty_msg.txt " + sender +  " < /dev/null"
 			os.system(cmd)
 		
 
 		# clean
 		os.remove(mail)
-		os.system("rm -f ~/nodescan/*.JPG ~/nodescan/*.jpg ~/nodescan/*.desc ~/nodescan/*.pdf")
-		os.system("rm -f ~/scanMail/sent/cur/*")
+		os.system("rm -f /home/pi/nodescan/*.JPG /home/pi/nodescan/*.jpg /home/pi/nodescan/*.desc /home/pi/nodescan/*.pdf")
+		os.system("rm -f /home/pi/scanMail/sent/cur/*")
 		#call(["rm part*"])
 		#call(["rm "+mail,])
 
