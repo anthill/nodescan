@@ -23,20 +23,27 @@ for mail in newmails:
 		images = glob.glob("*.jpg") + glob.glob("*.JPG") + glob.glob("*.png") + glob.glob("*.PNG")
 		# if image then process
 		if len(images) > 0:
-			cmd = "python scan.py --image " + images[0]
-			os.system(cmd)
-			# send back
-			cmd = "mutt -s 'Your scanned image' -i message_ok.txt " + sender +  " -a *.pdf < /dev/null"
-			os.system(cmd)
+			returncode = call(["python", "scan.py", "--image", image[0]])
+			if returncode == 0:
+				# send back the ok message with the file attached
+				cmd = "mutt -s 'Voilà ton scan !' -i ok_msg.txt " + sender +  " -a *.pdf < /dev/null"
+				os.system(cmd)
+			else:
+				# the image was not correctly processed
+				# send back the "file not processed" error message
+				cmd = "mutt -s 'Elle est moche ta photo' -i error_process_msg.txt " + sender +  " < /dev/null"
+				os.system(cmd)			
 		else:
-			# send back an error mail
-			cmd = "mutt -s 'No image to scan' -i message_error.txt " + sender +  " < /dev/null"
+			# there is no image to process
+			# send back the "no image attached" error message
+			cmd = "mutt -s 'Euh, elle est où ton image ?' -i error_empty_msg.txt " + sender +  " < /dev/null"
 			os.system(cmd)
 		
 
 		# clean
 		os.remove(mail)
 		os.system("rm -f *.JPG *.jpg *.PNG *.png *.desc")
+		os.system("rm -f ~/scanMail/sent/cur/*")
 		#call(["rm part*"])
 		#call(["rm "+mail,])
 
