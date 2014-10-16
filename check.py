@@ -25,16 +25,11 @@ for mail in newmails:
 		images = glob.glob("/home/pi/nodescan/*.jpg") + glob.glob("/home/pi/nodescan/*.JPG")
 		# if image then process
 		if len(images) > 0:
-			returncode = check_call(["python", scandir + "scan.py", "--image", images[0]])
-			if returncode == 0:
-				# send back the ok message with the file attached
-				cmd = "mutt -s 'Voila ton scan !' -i /home/pi/nodescan/ok_msg.txt " + sender +  " -a /home/pi/*.pdf < /dev/null"
-				os.system(cmd)
-			else:
-				# the image was not correctly processed
-				# send back the "file not processed" error message
-				cmd = "mutt -s 'Elle est moche ta photo' -i /home/pi/nodescan/error_process_msg.txt " + sender +  " < /dev/null"
-				os.system(cmd)			
+			check_call(["python", scandir + "scan.py", "--image", images[0]])
+			# send back the ok message with the file attached
+			cmd = "mutt -s 'Voila ton scan !' -i /home/pi/nodescan/ok_msg.txt " + sender +  " -a /home/pi/*.pdf < /dev/null"
+			os.system(cmd)
+						
 		else:
 			# there is no image to process
 			# send back the "no image attached" error message
@@ -54,3 +49,12 @@ for mail in newmails:
 		fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
 		print(exc_type, fname, exc_tb.tb_lineno)
 		print "pb with %s" % mail
+
+		# the image was not correctly processed
+		# send back the "file not processed" error message
+		cmd = "mutt -s 'Elle est moche ta photo' -i /home/pi/nodescan/error_process_msg.txt " + sender +  " < /dev/null"
+		os.system(cmd)
+		# clean
+		os.remove(mail)
+		os.system("rm -f /home/pi/nodescan/*.JPG /home/pi/nodescan/*.jpg /home/pi/nodescan/*.desc /home/pi/nodescan/*.pdf")
+		os.system("rm -f /home/pi/scanMail/sent/cur/*")
