@@ -1,2 +1,10 @@
-J'ai pas réussi à scanner ton image, ta photo est toute pourrie.
-Fais bien attention au contraste du fond pour qu'on voie bien les 4 coins de ta feuille.
+J'ai pas réussi à scanner ton image, c'est peut-être parce que la photo que tu m'as envoyée est toute pourrie !
+Pour que ça marche bien:
+- fais attention au contraste entre le support et ta feuille
+- je dois voir explicitement les 4 coins de la feuille
+- plus la photo est nette, plus le scan sera net
+- pas de photos coquines, enfin !
+
+
+*** NodePi, l'ami des nodeurs ***
+N'oubliez pas de venir me faire un câlin de temps à temps !
