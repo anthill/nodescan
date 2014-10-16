@@ -5,6 +5,7 @@ import re
 import os
 import sys
 from subprocess import call
+from subprocess import check_call
 
 
 call(["getmail",])
@@ -23,10 +24,10 @@ for mail in newmails:
 		images = glob.glob("*.jpg") + glob.glob("*.JPG") + glob.glob("*.png") + glob.glob("*.PNG")
 		# if image then process
 		if len(images) > 0:
-			returncode = call(["python", "scan.py", "--image", image[0]])
+			returncode = check_call(["python", "scan.py", "--image", images[0]])
 			if returncode == 0:
 				# send back the ok message with the file attached
-				cmd = "mutt -s 'Voilà ton scan !' -i ok_msg.txt " + sender +  " -a *.pdf < /dev/null"
+				cmd = "mutt -s 'Voila ton scan !' -i ok_msg.txt " + sender +  " -a *.pdf < /dev/null"
 				os.system(cmd)
 			else:
 				# the image was not correctly processed
@@ -36,7 +37,7 @@ for mail in newmails:
 		else:
 			# there is no image to process
 			# send back the "no image attached" error message
-			cmd = "mutt -s 'Euh, elle est où ton image ?' -i error_empty_msg.txt " + sender +  " < /dev/null"
+			cmd = "mutt -s 'Euh, elle est ou ton image ?' -i error_empty_msg.txt " + sender +  " < /dev/null"
 			os.system(cmd)
 		
 
