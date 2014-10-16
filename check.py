@@ -7,7 +7,7 @@ import sys
 from subprocess import call
 from subprocess import check_call
 
-#test
+
 call(["getmail",])
 
 newmails = glob.glob("/home/pi/scanMail/new/*.nodepi")
