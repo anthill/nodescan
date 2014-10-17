@@ -33,8 +33,11 @@ image = imutils.resize(image, height = 500)
 # convert the image to grayscale, blur it, and find edges
 # in the image
 # gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-# gray = cv2.GaussianBlur(gray, (5, 5), 0)
+# gray = cv2.GaussianBlur(image, (5, 5), 0)
+
 edged = cv2.Canny(image, 75, 200)
+
+# res = np.hstack((gray,eqgray))
 
 # find the contours in the edged image, keeping only the
 # largest ones, and initialize the screen contour
@@ -46,7 +49,6 @@ for c in cnts:
 	# approximate the contour
 	peri = cv2.arcLength(c, True)
 	approx = cv2.approxPolyDP(c, 0.02 * peri, True)
-	print(cv2.contourArea(c))
 
 	# if our approximated contour has four points, then we
 	# can assume that we have found our screen
@@ -77,6 +79,5 @@ ax = plt.Axes(fig, [0., 0., 1., 1.])
 ax.set_axis_off()
 fig.add_axes(ax)
 ax.imshow(final, aspect='normal', cmap = cm.gray)
-
 plt.savefig("out.pdf", format='pdf')
 # plt.show()
