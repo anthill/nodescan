@@ -39,7 +39,7 @@ for mail in newmails:
 
 		# clean
 		os.remove(mail)
-		os.system("rm -f /home/pi/nodescan/*.JPG /home/pi/nodescan/*.jpg /home/pi/nodescan/*.desc /home/pi/nodescan/*.pdf")
+		os.system("rm -f /home/pi/nodescan/*.JPG /home/pi/nodescan/*.jpg /home/pi/nodescan/*.desc /home/pi/*.pdf")
 		os.system("rm -f /home/pi/scanMail/sent/cur/*")
 		#call(["rm part*"])
 		#call(["rm "+mail,])
@@ -56,5 +56,5 @@ for mail in newmails:
 		os.system(cmd)
 		# clean
 		os.remove(mail)
-		os.system("rm -f /home/pi/nodescan/*.JPG /home/pi/nodescan/*.jpg /home/pi/nodescan/*.desc /home/pi/nodescan/*.pdf")
+		os.system("rm -f /home/pi/nodescan/*.JPG /home/pi/nodescan/*.jpg /home/pi/nodescan/*.desc /home/pi/*.pdf")
 		os.system("rm -f /home/pi/scanMail/sent/cur/*")
