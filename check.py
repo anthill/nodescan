@@ -16,20 +16,20 @@ newmails = glob.glob("/home/pi/scanMail/new/*.nodepi")
 scandir = "/home/pi/nodescan/"
 
 for mail in newmails:
+	# get sender
 	try:
-		# get sender
 		with open(mail, 'r') as f:
   			first_line = f.readline()
   			sender = re.search("<([\w\-][\w\-\.]+@[\w\-][\w\-\.]+[a-zA-Z]{1,4})>", first_line).group(1)
-				logText += "Successful parse:\n"
-				logText += sender + "/n"
+			logText += "Successful parse:\n"
+			logText += sender + "/n"
 	except:
 		logText += "Error in parsing %s\n" % mail
 		success = False
 		break
 
+	# get image
 	try:
-		# get image
 		cmd = "munpack -C /home/pi/nodescan " + mail
 		os.system(cmd)
 		logText += "Succesfull outputting image munpack \n"
@@ -40,7 +40,6 @@ for mail in newmails:
 
 
 	images = glob.glob("/home/pi/nodescan/*.jpg") + glob.glob("/home/pi/nodescan/*.JPG")
-	# if image then process
 	if len(images) > 0:
 		try:
 			check_call(["python", scandir + "scan.py", "--image", images[0]])
@@ -94,6 +93,6 @@ for mail in newmails:
 		os.system("rm -f /home/pi/scanMail/sent/cur/*")
 
 
-logs = open("/home/pi/nodescan/log.txt", "a")
+logs = open("log.txt", "a")
 logs.write(logText)
 logs.close()

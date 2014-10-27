@@ -1,5 +1,5 @@
 # USAGE
-# python scan.py --image images/page.jpg 
+# python scan.py --image images/page.jpg
 
 import matplotlib
 matplotlib.use('Agg')
@@ -56,10 +56,6 @@ for c in cnts:
 		screenCnt = approx
 		break
 
-		file =open
-		file.write
-		file.close
-
 # apply the four point transform to obtain a top-down
 # view of the original image
 warped = four_point_transform(orig, screenCnt.reshape(4, 2) * ratio)
@@ -78,6 +74,6 @@ fig.set_size_inches(8.27, 11.69)
 ax = plt.Axes(fig, [0., 0., 1., 1.])
 ax.set_axis_off()
 fig.add_axes(ax)
-ax.imshow(final, aspect='normal', cmap = cm.gray)
+ax.imshow(final, aspect='normal')
 plt.savefig("out.pdf", format='pdf')
 # plt.show()
