@@ -70,7 +70,7 @@ for mail in newmails:
 	try:
 		# clean
 		os.remove(mail)
-		os.system("rm -f /home/pi/nodescan/*.JPG /home/pi/nodescan/*.jpg /home/pi/nodescan/*.desc /home/pi/*.pdf")
+		os.system("rm -f /home/pi/nodescan/*.JPG.* /home/pi/nodescan/*.jpg.* /home/pi/nodescan/*.desc.* /home/pi/*.pdf.*")
 		os.system("rm -f /home/pi/scanMail/sent/cur/*")
 		logText += "Successfully cleaned files \n"
 	except:
@@ -92,7 +92,7 @@ for mail in newmails:
 		# clean
 		try: 
 			os.remove(mail)
-			os.system("rm -f /home/pi/nodescan/*.JPG /home/pi/nodescan/*.jpg /home/pi/nodescan/*.desc /home/pi/*.pdf")
+			os.system("rm -f /home/pi/nodescan/*.JPG.* /home/pi/nodescan/*.jpg.* /home/pi/nodescan/*.desc* /home/pi/*.pdf.*")
 			os.system("rm -f /home/pi/scanMail/sent/cur/*")
 		except:
 			print "error in cleaning"
