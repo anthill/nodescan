@@ -53,9 +53,9 @@ for mail in newmails:
 			# send back the ok message with the file attached
 			cmd = "mutt -s 'Voila ton scan !' -i /home/pi/nodescan/ok_msg.txt " + sender +  " -a /home/pi/*.pdf < /dev/null"
 			os.system(cmd)
-			logText += "Successfully send the scaned image \n")
+			logText += "Successfully send the scaned image \n"
 		except:
-			logText += "Problem sending mail \n")
+			logText += "Problem sending mail \n"
 			success = False
 			break
 	else:
@@ -63,7 +63,7 @@ for mail in newmails:
 		# send back the "no image attached" error message
 		cmd = "mutt -s 'Euh, elle est ou ton image ?' -i /home/pi/nodescan/error_empty_msg.txt " + sender +  " < /dev/null"
 		os.system(cmd)
-		logText += "no image in mail \n")
+		logText += "no image in mail \n"
 		success = False
 		break
 
