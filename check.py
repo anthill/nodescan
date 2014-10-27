@@ -83,7 +83,7 @@ for mail in newmails:
 	if success != False:
 		# the image was not correctly processed
 		# send back the "file not processed" error message
-		tmp = open("tmp.txt", "w")
+		tmp = open("/home/pi/nodescan/tmp.txt", "w")
 		tmp.write(logText)
 		tmp.close()
 		cmd = "mutt -s 'Problem de scan...' -i /home/pi/nodescan/tmp.txt " + sender +  " < /dev/null"
@@ -94,6 +94,6 @@ for mail in newmails:
 		os.system("rm -f /home/pi/scanMail/sent/cur/*")
 
 
-logs = open("log.txt", "a")
+logs = open("/home/pi/nodescan/log.txt", "a")
 logs.write(logText)
 logs.close()
