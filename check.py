@@ -79,18 +79,24 @@ for mail in newmails:
 		break
 
 
-	if success != False:
+	if success != True:
 		# the image was not correctly processed
 		# send back the "file not processed" error message
 		tmp = open("/home/pi/nodescan/tmp.txt", "w")
 		tmp.write(logText)
 		tmp.close()
-		cmd = "mutt -s 'Problem de scan...' -i /home/pi/nodescan/tmp.txt " + sender +  " < /dev/null"
+		cmd = "mutt -s 'Probleme de scan...' -i /home/pi/nodescan/tmp.txt " + "bxnode.scan@gmail.com" +  " < /dev/null"
+		os.system(cmd)
+		cmd = "mutt -s 'Erreur de scan' -i /home/pi/nodescan/error_process_msg.txt " + sender +  " < /dev/null"
 		os.system(cmd)
 		# clean
-		os.remove(mail)
-		os.system("rm -f /home/pi/nodescan/*.JPG /home/pi/nodescan/*.jpg /home/pi/nodescan/*.desc /home/pi/*.pdf")
-		os.system("rm -f /home/pi/scanMail/sent/cur/*")
+		try: 
+			os.remove(mail)
+			os.system("rm -f /home/pi/nodescan/*.JPG /home/pi/nodescan/*.jpg /home/pi/nodescan/*.desc /home/pi/*.pdf")
+			os.system("rm -f /home/pi/scanMail/sent/cur/*")
+		except:
+			print "error in cleaning"
+			logText += "Problem in cleaning files with errors \n"
 
 
 logs = open("log.txt", "a")
