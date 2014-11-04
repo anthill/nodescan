@@ -72,7 +72,7 @@ for mail in newmails:
 	# try:
 	# clean
 	os.remove(mail)
-	cmd = "rm -f " + map(lambda x: "/home/pi/nodescan/*."+x, formats +["pdf, desc"]).join(" ")
+	cmd = "rm -f " + " ".join(map(lambda x: "/home/pi/nodescan/*."+x, formats +["pdf, desc"]))
 	os.system(cmd)
 	os.system("rm -f /home/pi/scanMail/sent/cur/*")
 	logging.debug("Successfully cleaned files")
