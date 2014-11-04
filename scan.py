@@ -15,8 +15,7 @@ import pylab as plt
 import matplotlib.cm as cm
 # construct the argument parser and parse the arguments
 ap = argparse.ArgumentParser()
-ap.add_argument("-i", "--image", required = True,
-	help = "Path to the image to be scanned")
+ap.add_argument("-i", "--image", required = True, help = "Path to the image to be scanned")
 args = vars(ap.parse_args())
 
 # load the image and compute the ratio of the old height
