@@ -41,7 +41,7 @@ for mail in newmails:
 		break
 
 
-	images = flatten(map(lambda x: glob.glob("/home/pi/nodescan/*."+x), formats))
+	images = sum(map(lambda x: glob.glob("/home/pi/nodescan/*."+x), formats), [])
 	if len(images) > 0:
 		try:
 			check_call(["python", scandir + "scan.py", "--image", images[0]])
