@@ -69,17 +69,17 @@ for mail in newmails:
 		success = False
 		break
 
-	# try:
+	try:
 	# clean
-	os.remove(mail)
-	cmd = "rm -f " + " ".join(map(lambda x: "/home/pi/nodescan/*."+x, formats +["pdf, desc"]))
-	os.system(cmd)
-	os.system("rm -f /home/pi/scanMail/sent/cur/*")
-	logging.debug("Successfully cleaned files")
-	# except:
-	# 	logging.debug("Problem in cleaning files")
-	# 	success = False
-	# 	break
+		os.remove(mail)
+		cmd = "rm -f " + " ".join(map(lambda x: "/home/pi/nodescan/*."+x, formats +["pdf", "desc"]))
+		os.system(cmd)
+		os.system("rm -f /home/pi/scanMail/sent/cur/*")
+		logging.debug("Successfully cleaned files")
+	except:
+		logging.debug("Problem in cleaning files")
+		success = False
+		break
 
 
 	if success != True:
