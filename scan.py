@@ -41,26 +41,40 @@ edged = cv2.Canny(image, 75, 200)
 # find the contours in the edged image, keeping only the
 # largest ones, and initialize the screen contour
 (cnts, _) = cv2.findContours(edged.copy(), cv2.RETR_LIST, cv2.CHAIN_APPROX_SIMPLE)
-# cnts = sorted(cnts, key = cv2.contourArea, reverse = True)[:5]
+
+
+# take the biggest contour
 perimeters = map(lambda x: cv2.arcLength(x, False), cnts)
 index = np.argmax(perimeters)
-cnts = [cnts[index]]
+contour = cnts[index]
 
-# loop over the contours
-for c in cnts:
-	# approximate the contour
-	peri = cv2.arcLength(c, True)
-	approx = cv2.approxPolyDP(c, 0.02 * peri, True)
+def removeInlier(points, closeLine=False):
+	initial_area = cv2.contourArea(points);
+	new_contour = points
+	ratios = []
+	for i in range(len(points)):
+		# new_contour = points.pop(i)
+		new_contour = np.delete(new_contour,i,0)
+		new_area = cv2.contourArea(new_contour);
+		ratios+=[new_area/initial_area]
+		new_contour = points
+	index = np.argmax(ratios)
+	return np.delete(points,index,0)
 
-	# if our approximated contour has four points, then we
-	# can assume that we have found our screen
-	if len(approx) == 4:
-		screenCnt = approx
-		break
+
+# approximate the contour
+peri = cv2.arcLength(contour, True)
+approx = cv2.approxPolyDP(contour, 0.02 * peri, True)
+approx = cv2.convexHull(approx)
+approx = approx.reshape((len(approx),2))
+while len(approx)>4 :
+	approx = removeInlier(approx)
+
+
 
 # apply the four point transform to obtain a top-down
 # view of the original image
-warped = four_point_transform(orig, screenCnt.reshape(4, 2) * ratio)
+warped = four_point_transform(orig, approx.reshape(4, 2) * ratio)
 
 # convert the warped image to grayscale, then threshold it
 # to give it that 'black and white' paper effect

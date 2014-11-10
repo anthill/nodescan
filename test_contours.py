@@ -7,7 +7,7 @@ import cv2
 import pylab as plt
 import matplotlib.cm as cm
 
-image = cv2.imread("/Users/vallette/Desktop/photo1.JPG")
+image = cv2.imread("/Users/vallette/Desktop/photo2.JPG")
 
 b,g,r = cv2.split(image)       # get b,g,r
 image = cv2.merge([r,g,b])     # switch it to rgb
@@ -79,6 +79,18 @@ def removeInlier(points, closeLine=False):
 		points[index-1] = [X,Y]
 		return points
 
+def removeInlier2(points, closeLine=False):
+	initial_area = cv2.contourArea(points);
+	new_contour = points
+	ratios = []
+	for i in range(len(points)):
+		# new_contour = points.pop(i)
+		new_contour = np.delete(new_contour,i,0)
+		new_area = cv2.contourArea(new_contour);
+		ratios+=[new_area/initial_area]
+		new_contour = points
+	index = np.argmax(ratios)
+	return np.delete(points,index,0)
 
 plt.imshow(image)
 
@@ -87,11 +99,9 @@ for contour in cnts:
 	approx = cv2.approxPolyDP(contour, 0.02 * peri, True)
 	approx = cv2.convexHull(approx)
 	approx = approx.reshape((len(approx),2))
-	while len(approx)>5 :
-		approx = removeInlier(approx)
-	# approx = removeInlier(approx)
-	# approx = removeInlier(approx)
-	# approx = removeInlier(approx, True)
+	while len(approx)>4 :
+		approx = removeInlier2(approx)
+
 	cntr = np.array(approx).T
 	plt.plot(cntr[0], cntr[1], '-')
 	for x,y in zip(cntr[0], cntr[1]):
