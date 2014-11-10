@@ -41,7 +41,10 @@ edged = cv2.Canny(image, 75, 200)
 # find the contours in the edged image, keeping only the
 # largest ones, and initialize the screen contour
 (cnts, _) = cv2.findContours(edged.copy(), cv2.RETR_LIST, cv2.CHAIN_APPROX_SIMPLE)
-cnts = sorted(cnts, key = cv2.contourArea, reverse = True)[:5]
+# cnts = sorted(cnts, key = cv2.contourArea, reverse = True)[:5]
+perimeters = map(lambda x: cv2.arcLength(x, False), cnts)
+index = np.argmax(perimeters)
+cnts = [cnts[index]]
 
 # loop over the contours
 for c in cnts:
