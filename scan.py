@@ -31,7 +31,7 @@ image = imutils.resize(image, height = 500)
 
 # convert the image to grayscale, blur it, and find edges
 # in the image
-# gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
 # gray = cv2.GaussianBlur(image, (5, 5), 0)
 
 edged = cv2.Canny(image, 75, 200)
