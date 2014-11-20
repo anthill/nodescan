@@ -16,23 +16,19 @@ import matplotlib.cm as cm
 # construct the argument parser and parse the arguments
 ap = argparse.ArgumentParser()
 ap.add_argument("-i", "--image", required = True, help = "Path to the image to be scanned")
+ap.add_argument("-o", "--out", default= "./", required = False, help = "Path to the outpur image.")
+ap.add_argument("-b", "--bw", required = False, help = "Black and white: true or false")
+ap.add_argument("-f", "--format", default="pdf", required = False, help = "Specify the format.")
+ap.add_argument("-p", "--dpi", default=300, required = False, help = "Specify the dpi resolution.")
 args = vars(ap.parse_args())
 
 # load the image and compute the ratio of the old height
 # to the new height, clone it, and resize it
 image = cv2.imread(args["image"])
 
-b,g,r = cv2.split(image)       # get b,g,r
-image = cv2.merge([r,g,b])     # switch it to rgb
-
 ratio = image.shape[0] / 500.0
 orig = image.copy()
 image = imutils.resize(image, height = 500)
-
-# convert the image to grayscale, blur it, and find edges
-# in the image
-gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-# gray = cv2.GaussianBlur(image, (5, 5), 0)
 
 edged = cv2.Canny(image, 75, 200)
 
@@ -76,11 +72,13 @@ while len(approx)>4 :
 # view of the original image
 warped = four_point_transform(orig, approx.reshape(4, 2) * ratio)
 
-# convert the warped image to grayscale, then threshold it
-# to give it that 'black and white' paper effect
-# warped = cv2.cvtColor(warped, cv2.COLOR_BGR2GRAY)
-# warped = threshold_adaptive(warped, 250, offset = 10)
-# warped = warped.astype("uint8") * 255
+if args["bw"] == "true":
+	warped = cv2.cvtColor(warped, cv2.COLOR_BGR2GRAY)
+	warped = threshold_adaptive(warped, 40, offset = 7)
+	warped = warped.astype("uint8") * 255
+else:
+	b,g,r = cv2.split(warped)       # get b,g,r
+	warped = cv2.merge([r,g,b])     # switch it to rgb
 
 final = imutils.resize(warped, height = 650)
 
@@ -90,6 +88,12 @@ fig.set_size_inches(8.27, 11.69)
 ax = plt.Axes(fig, [0., 0., 1., 1.])
 ax.set_axis_off()
 fig.add_axes(ax)
-ax.imshow(final, aspect='normal')
-plt.savefig("out.pdf", format='pdf')
-# plt.show()
+if args["bw"] == "true":
+	ax.imshow(final, aspect='normal', cmap = plt.get_cmap('gray'))
+else:
+	ax.imshow(final, aspect='normal')
+
+format = str(args["format"])
+path = str(args["out"])
+plt.savefig(path + "out." + format, format=format, dpi=int(args["dpi"]))
+
