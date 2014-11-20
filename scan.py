@@ -13,10 +13,13 @@ import argparse
 import cv2
 import pylab as plt
 import matplotlib.cm as cm
+import shutil
 # construct the argument parser and parse the arguments
 ap = argparse.ArgumentParser()
 ap.add_argument("-i", "--image", required = True, help = "Path to the image to be scanned")
-ap.add_argument("-o", "--out", default= "./", required = False, help = "Path to the outpur image.")
+ap.add_argument("-o", "--out", default= "./", required = False, help = "Path to the output image.")
+ap.add_argument("-n", "--name", default= "out", required = False, help = "Name of the resulting file image.")
+ap.add_argument("-k", "--koriginal", default= "fasle", required = False, help = "Whether to keep original image.")
 ap.add_argument("-b", "--bw", required = False, help = "Black and white: true or false")
 ap.add_argument("-f", "--format", default="pdf", required = False, help = "Specify the format.")
 ap.add_argument("-p", "--dpi", default=300, required = False, help = "Specify the dpi resolution.")
@@ -95,5 +98,10 @@ else:
 
 format = str(args["format"])
 path = str(args["out"])
-plt.savefig(path + "out." + format, format=format, dpi=int(args["dpi"]))
+plt.savefig(path + str(args["name"]) + "." + format, format=format, dpi=int(args["dpi"]))
+
+if args["koriginal"]:
+	orig_path = args["image"]
+	orig_format = orig_path.split(".")[-1]
+	shutil.copyfile(orig_path, path + str(args["name"]) + "." + orig_format )
 
