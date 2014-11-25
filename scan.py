@@ -23,6 +23,7 @@ ap.add_argument("-k", "--koriginal", default= "fasle", required = False, help = 
 ap.add_argument("-b", "--bw", required = False, help = "Black and white: true or false")
 ap.add_argument("-f", "--format", default="pdf", required = False, help = "Specify the format.")
 ap.add_argument("-p", "--dpi", default=300, required = False, help = "Specify the dpi resolution.")
+ap.add_argument("-a", "--a4", default="false", required = False, help = "Format to A4 paper.")
 args = vars(ap.parse_args())
 
 # load the image and compute the ratio of the old height
@@ -87,10 +88,17 @@ final = imutils.resize(warped, height = 650)
 
 
 fig = plt.figure(frameon=False)
-fig.set_size_inches(8.27, 11.69)
-ax = plt.Axes(fig, [0., 0., 1., 1.])
-ax.set_axis_off()
-fig.add_axes(ax)
+if str(args["a4"]) == "true":
+	fig.set_size_inches(8.27, 11.69)
+	ax = plt.Axes(fig, [0., 0., 1., 1.])
+	ax.set_axis_off()
+	fig.add_axes(ax)
+else:
+	fig.set_size_inches(3, 3*ratio)
+	ax = plt.Axes(fig, [0., 0., 1., 1.])
+	ax.set_axis_off()
+	fig.add_axes(ax)
+
 if args["bw"] == "true":
 	ax.imshow(final, aspect='normal', cmap = plt.get_cmap('gray'))
 else:
