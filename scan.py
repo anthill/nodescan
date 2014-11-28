@@ -42,11 +42,9 @@ edged = cv2.Canny(image, 75, 200)
 # largest ones, and initialize the screen contour
 (cnts, _) = cv2.findContours(edged.copy(), cv2.RETR_LIST, cv2.CHAIN_APPROX_SIMPLE)
 
-
-# take the biggest contour
-perimeters = map(lambda x: cv2.arcLength(x, False), cnts)
-index = np.argmax(perimeters)
-contour = cnts[index]
+# sort by perimeter first and then area
+cnts = sorted(cnts, key = lambda x: cv2.arcLength(x, False), reverse = True)[:3]
+contour = sorted(cnts, key = lambda x: cv2.contourArea(x, False), reverse = True)[0]
 
 def removeInlier(points, closeLine=False):
 	initial_area = cv2.contourArea(points);
@@ -85,7 +83,7 @@ else:
 	warped = cv2.merge([r,g,b])     # switch it to rgb
 
 final = imutils.resize(warped, height = 650)
-
+sheet_ratio = final.shape[0]/float(final.shape[1])
 
 fig = plt.figure(frameon=False)
 if str(args["a4"]) == "true":
@@ -94,15 +92,15 @@ if str(args["a4"]) == "true":
 	ax.set_axis_off()
 	fig.add_axes(ax)
 else:
-	fig.set_size_inches(3, 3*ratio)
+	fig.set_size_inches(3, 3/sheet_ratio)
 	ax = plt.Axes(fig, [0., 0., 1., 1.])
 	ax.set_axis_off()
 	fig.add_axes(ax)
 
 if args["bw"] == "true":
-	ax.imshow(final, aspect='normal', cmap = plt.get_cmap('gray'))
+	ax.imshow(final, aspect='auto', cmap = plt.get_cmap('gray'))
 else:
-	ax.imshow(final, aspect='normal')
+	ax.imshow(final, aspect='auto')
 
 format = str(args["format"])
 path = str(args["out"])
