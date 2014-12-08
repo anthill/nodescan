@@ -47,10 +47,10 @@ for mail in newmails:
 
     # process images and add them to answer
     for part in msg.walk():
-        atype, format = part.get_content_type().split("/")
+        atype, fformat = part.get_content_type().split("/")
         if atype == "image":
-            open('attachment.' + format, 'wb').write(part.get_payload(decode=True))
-            check_call(["python", os.path.abspath("scan.py"), "-i", 'attachment.' + format, "-b", bw, "-a", a4])
+            open('attachment.' + fformat, 'wb').write(part.get_payload(decode=True))
+            check_call(["python", os.path.abspath("scan.py"), "-i", os.path.abspath("attachment." + fformat), "-b", bw, "-a", a4])
             img_data = open(os.path.abspath("out.pdf"), 'rb').read()
             image = MIMEImage(img_data, name=os.path.basename("out.pdf"), _subtype="pdf")
             msg.attach(image)
