@@ -13,12 +13,12 @@ from subprocess import check_call
 login = json.loads(open("login.json","r").read())
 
 # get unseen mails
-mail = imaplib.IMAP4_SSL("imap." + login["host"], 993)
-mail.login(login["user"], login["password"])
-mail.select('INBOX')
-result, data = mail.search(None, "ALL")
+mailer = imaplib.IMAP4_SSL("imap." + login["host"], 993)
+mailer.login(login["user"], login["password"])
+mailer.select('INBOX')
+result, data = mailer.search(None, "SEEN")
 uids = data[0].split()
-newmails = [mail.fetch(uids[i], "(RFC822)")[1][0][1] for i in range(len(uids))]
+newmails = [mailer.fetch(uids[i], "(RFC822)")[1][0][1] for i in range(len(uids))]
 
 for mail in newmails:
     # parse mail and content
@@ -66,7 +66,7 @@ for mail in newmails:
 
     # mark as read
     for e_id in uids:
-        mail.store(e_id, '+FLAGS', '\Seen')
+        mailer.store(e_id, '+FLAGS', '\Seen')
 
 
 
