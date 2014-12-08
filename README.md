@@ -13,15 +13,19 @@ will produce a file `out.pdf` with the processed image.
 This script for cleaning is inspired by pyimageseach.
 
 
-## Install
+## Logins
 
-Use
+In a `login.json` at the root of the project:
+
+```
+{"host": "gmail.com", "password": "yourpassword", "message": "test", "user": "bxnode.scan@gmail.com", "port": 587}
+```
+
+
+## Dependency
+
+You'll need opencv installed:
 
 ```
 sudo apt-get -y install libopencv-dev python-opencv
-
-sudo apt-get -y install getmail4 
-mkdir -p ~/mail/new
-mkdir -p ~/mail/cur
-mkdir -p ~/mail/tmp
 ```

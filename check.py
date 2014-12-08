@@ -2,8 +2,7 @@
 import os
 import re
 import json
-import smtplib
-import poplib
+import smtplib, imaplib
 from email import parser
 from email.mime.text import MIMEText
 from email.mime.image import MIMEImage
@@ -13,12 +12,13 @@ from subprocess import check_call
 
 login = json.loads(open("login.json","r").read())
 
-pop_conn = poplib.POP3_SSL("pop." + login["host"])
-pop_conn.user(login["user"])
-pop_conn.pass_(login["password"])
-
-newmails = [pop_conn.retr(i) for i in range(1, len(pop_conn.list()[1]) + 1)]
-newmails = ["\n".join(mssg[1]) for mssg in newmails]
+# get unseen mails
+mail = imaplib.IMAP4_SSL("imap." + login["host"], 993)
+mail.login(login["user"], login["password"])
+mail.select('INBOX')
+result, data = mail.search(None, "ALL")
+uids = data[0].split()
+newmails = [mail.fetch(uids[i], "(RFC822)")[1][0][1] for i in range(len(uids))]
 
 for mail in newmails:
     # parse mail and content
@@ -46,10 +46,10 @@ for mail in newmails:
         a4 = "false"
 
     # process images and add them to answer
-    for attachment in msg.get_payload():
+    for part in msg.walk():
         atype, format = attachment.get_content_type().split("/")
         if atype == "image":
-            open('attachment.' + format, 'wb').write(attachment.get_payload(decode=True))
+            open('attachment.' + format, 'wb').write(part.get_payload(decode=True))
             check_call(["python", os.path.abspath("scan.py"), "-i", 'attachment.' + format, "-b", bw, "-a", a4])
             img_data = open(os.path.abspath("out.pdf"), 'rb').read()
             image = MIMEImage(img_data, name=os.path.basename("out.pdf"), _subtype="pdf")
@@ -63,6 +63,10 @@ for mail in newmails:
     s.login(login["user"], login["password"])
     s.sendmail(login["user"], sender, msg.as_string())
     s.quit()
+
+    # mark as read
+    for e_id in uids:
+        mail.store(e_id, '+FLAGS', '\Seen')
 
 
 
