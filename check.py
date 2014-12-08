@@ -3,7 +3,7 @@ import os
 import re
 import json
 import smtplib, imaplib
-from email import parser
+import email
 from email.mime.text import MIMEText
 from email.mime.image import MIMEImage
 from email.mime.multipart import MIMEMultipart
@@ -16,26 +16,26 @@ login = json.loads(open("login.json","r").read())
 mailer = imaplib.IMAP4_SSL("imap." + login["host"], 993)
 mailer.login(login["user"], login["password"])
 mailer.select('INBOX')
-result, data = mailer.search(None, "SEEN")
+result, data = mailer.search(None, "(UNSEEN)")
 uids = data[0].split()
 newmails = [mailer.fetch(uids[i], "(RFC822)")[1][0][1] for i in range(len(uids))]
 
 for mail in newmails:
     # parse mail and content
-    msg = parser.Parser().parsestr(mail)
+    msg = email.message_from_string(mail)
     sender = re.search("<([\w\-][\w\-\.]+@[\w\-][\w\-\.]+[a-zA-Z]{1,4})>", msg["From"]).group(1)
     subject = msg["Subject"].lower()
 
     # prepare answer
-    msg = MIMEMultipart()
-    msg['Subject'] = 'Your Scan'
-    msg['From'] = login["user"]
-    msg['To'] = sender
+    responseMessage = MIMEMultipart()
+    responseMessage['Subject'] = 'Your Scan'
+    responseMessage['From'] = login["user"]
+    responseMessage['To'] = sender
     text = MIMEText(login["message"])
-    msg.attach(text)
+    responseMessage.attach(text)
 
     # parse subject for arguments
-    args = subject.split(" ")
+    args = subject.split()
     if "bw" in args:
         bw = "true"
     else:
@@ -61,7 +61,7 @@ for mail in newmails:
     s.starttls()
     s.ehlo()
     s.login(login["user"], login["password"])
-    s.sendmail(login["user"], sender, msg.as_string())
+    s.sendmail(login["user"], sender, responseMessage.as_string())
     s.quit()
 
     # mark as read
