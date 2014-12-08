@@ -36,7 +36,7 @@ for mail in newmails:
 
     # parse subject for arguments
     argsubject = subject.split()
-    args = {"out": ".", "name": "out", "format": "pdf", "koriginal": "false", "dpi": 80 }
+    args = {"out": "./", "name": "out", "format": "pdf", "koriginal": "false", "dpi": 80 }
     if "bw" in argsubject:
         args["bw"] = "true"
     else:
