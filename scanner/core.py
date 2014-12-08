@@ -92,9 +92,9 @@ def processImage(args):
 
 	format = str(args["format"])
 	path = str(args["out"])
-	plt.savefig(path + str(args["name"]) + "." + format, format=format, dpi=int(args["dpi"]))
+	plt.savefig(path + str(args["name"]) + "./" + format, format=format, dpi=int(args["dpi"]))
 
-	if args["koriginal"]:
+	if args["koriginal"] == "true":
 		orig_path = args["image"]
 		orig_format = orig_path.split(".")[-1]
 		shutil.copyfile(orig_path, path + str(args["name"]) + "." + orig_format )
