@@ -1,101 +1,71 @@
 
-
-import logging
-import glob
-import re
 import os
-import sys
-from subprocess import call
+import re
+import json
+import smtplib
+import poplib
+from email import parser
+from email.mime.text import MIMEText
+from email.mime.image import MIMEImage
+from email.mime.multipart import MIMEMultipart
 from subprocess import check_call
 
-success = True
 
-call(["getmail",])
+login = json.loads(open("login.json","r").read())
 
-logging.basicConfig(filename='log.txt',level=logging.DEBUG)
-newmails = glob.glob("/home/pi/scanMail/new/*.nodepi")
-scandir = "/home/pi/nodescan/"
-formats = ["jpg", "JPG", "PNG", "png"]
+pop_conn = poplib.POP3_SSL("pop." + login["host"])
+pop_conn.user(login["user"])
+pop_conn.pass_(login["password"])
+
+newmails = [pop_conn.retr(i) for i in range(1, len(pop_conn.list()[1]) + 1)]
+newmails = ["\n".join(mssg[1]) for mssg in newmails]
 
 for mail in newmails:
-	# get sender
-	try:
-		with open(mail, 'r') as f:
-  			first_line = f.readline()
-  			sender = re.search("<([\w\-][\w\-\.]+@[\w\-][\w\-\.]+[a-zA-Z]{1,4})>", first_line).group(1)
-			logging.debug("Successful parse")
-			logging.debug(sender)
-	except:
-		logging.debug("Error in parsing %s\n" % l)
-		success = False
-		break
+    # parse mail and content
+    msg = parser.Parser().parsestr(mail)
+    sender = re.search("<([\w\-][\w\-\.]+@[\w\-][\w\-\.]+[a-zA-Z]{1,4})>", msg["From"]).group(1)
+    subject = msg["Subject"].lower()
 
-	# get image
-	try:
-		cmd = "munpack -fq -C /home/pi/nodescan " + mail
-		os.system(cmd)
-		logging.debug("Succesfull outputting image munpack")
-	except:
-		logging.debug("Error in outputting image munpack")
-		success = False
-		break
+    # prepare answer
+    msg = MIMEMultipart()
+    msg['Subject'] = 'Your Scan'
+    msg['From'] = login["user"]
+    msg['To'] = sender
+    text = MIMEText(login["message"])
+    msg.attach(text)
 
+    # parse subject for arguments
+    args = subject.split(" ")
+    if "bw" in args:
+        bw = "true"
+    else:
+        bw = "false"
+    if "a4" in args:
+        a4 = "true"
+    else:
+        a4 = "false"
 
-	images = sum(map(lambda x: glob.glob("/home/pi/nodescan/*."+x), formats), [])
-	if len(images) > 0:
-		try:
-			check_call(["python", scandir + "scan.py", "--image", images[0]])
-			logging.debug("Successfully used scan.py")
-		except:
-			logging.debug("Problem with scan.py")
-			success = False
-			break
+    # process images and add them to answer
+    for attachment in msg.get_payload():
+        atype, format = attachment.get_content_type().split("/")
+        if atype == "image":
+            open('attachment.' + format, 'wb').write(attachment.get_payload(decode=True))
+            check_call(["python", os.path.abspath("scan.py"), "-i", 'attachment.' + format, "-b", bw, "-a", a4])
+            img_data = open(os.path.abspath("out.pdf"), 'rb').read()
+            image = MIMEImage(img_data, name=os.path.basename("out.pdf"), _subtype="pdf")
+            msg.attach(image)
 
-		try:
-			# send back the ok message with the file attached
-			cmd = "mutt -s 'Voila ton scan !' -i /home/pi/nodescan/ok_msg.txt " + sender +  " -a /home/pi/*.pdf < /dev/null"
-			os.system(cmd)
-			logging.debug("Successfully send the scaned image")
-		except:
-			logging.debug("Problem sending mail")
-			success = False
-			break
-	else:
-		# there is no image to process
-		# send back the "no image attached" error message
-		cmd = "mutt -s 'Euh, elle est ou ton image ?' -i /home/pi/nodescan/error_empty_msg.txt " + sender +  " < /dev/null"
-		os.system(cmd)
-		logging.debug("no image in mail")
-		success = False
-		break
-
-	try:
-	# clean
-		os.remove(mail)
-		cmd = "rm -f " + " ".join(map(lambda x: "/home/pi/nodescan/*."+x, formats +["pdf", "desc"]))
-		os.system(cmd)
-		os.system("rm -f /home/pi/scanMail/sent/cur/*")
-		logging.debug("Successfully cleaned files")
-	except:
-		logging.debug("Problem in cleaning files")
-		success = False
-		break
+    # send mail
+    s = smtplib.SMTP("smtp." + login["host"], login["port"])
+    s.ehlo()
+    s.starttls()
+    s.ehlo()
+    s.login(login["user"], login["password"])
+    s.sendmail(login["user"], sender, msg.as_string())
+    s.quit()
 
 
-	if success != True:
-		# the image was not correctly processed
-		# send back the "file not processed" error message
-		cmd = "mutt -s 'Probleme de scan...' -i /home/pi/nodescan/log.txt " + "bxnode.scan@gmail.com" +  " < /dev/null"
-		os.system(cmd)
-		cmd = "mutt -s 'Erreur de scan' -i /home/pi/nodescan/error_process_msg.txt " + sender +  " < /dev/null"
-		os.system(cmd)
-		# clean
-		try: 
-			os.remove(mail)
-			os.system("rm -f /home/pi/nodescan/*.JPG.* /home/pi/nodescan/*.jpg.* /home/pi/nodescan/*.desc* /home/pi/*.pdf.*")
-			os.system("rm -f /home/pi/scanMail/sent/cur/*")
-		except:
-			print "error in cleaning"
-			logging.debug("Problem in cleaning files with errors")
+
+
 
 

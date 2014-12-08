@@ -1,6 +1,3 @@
-# USAGE
-# python scan.py --image images/page.jpg
-
 import matplotlib
 matplotlib.use('Agg')
 

@@ -17,21 +17,11 @@ This script for cleaning is inspired by pyimageseach.
 
 Use
 
-sudo apt-get update
-sudo apt-get -y install git git-flow curl unzip zsh python-pip
-git clone git://github.com/robbyrussell/oh-my-zsh.git ~/.oh-my-zsh
-cp ~/.zshrc ~/.zshrc.orig
-cp ~/.oh-my-zsh/templates/zshrc.zsh-template ~/.zshrc
-chsh -s /bin/zsh
-git clone https://github.com/gmarik/vundle.git ~/.vim/bundle/vundle
-export EDITOR=vim;
-
-
-sudo apt-get -y install python-numpy python-scipy python-matplotlib ipython ipython-notebook python-pandas
+```
 sudo apt-get -y install libopencv-dev python-opencv
 
-sudo apt-get -y install getmail4 mpack
+sudo apt-get -y install getmail4 
 mkdir -p ~/mail/new
 mkdir -p ~/mail/cur
 mkdir -p ~/mail/tmp
-
+```
