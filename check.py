@@ -48,7 +48,7 @@ for mail in newmails:
     # process images and add them to answer
     for part in msg.walk():
         atype, fformat = part.get_content_type().split("/")
-        if atype == "image":
+        if atype == "image" and (fformat in ["jpeg", "png", "jpg"]):
             open('attachment.' + fformat, 'wb').write(part.get_payload(decode=True))
             check_call(["python", os.path.abspath("scan.py"), "-i", os.path.abspath("attachment." + fformat), "-b", bw, "-a", a4])
             img_data = open(os.path.abspath("out.pdf"), 'rb').read()
