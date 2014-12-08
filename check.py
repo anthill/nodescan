@@ -7,7 +7,7 @@ import email
 from email.mime.text import MIMEText
 from email.mime.image import MIMEImage
 from email.mime.multipart import MIMEMultipart
-from subprocess import check_call
+from scanner import core
 
 
 login = json.loads(open("login.json","r").read())
@@ -35,22 +35,24 @@ for mail in newmails:
     responseMessage.attach(text)
 
     # parse subject for arguments
-    args = subject.split()
-    if "bw" in args:
-        bw = "true"
+    argsubject = subject.split()
+    args = {"out": ".", "name": "out", "format": "pdf", "koriginal": "false", "dpi": 80 }
+    if "bw" in argsubject:
+        args["bw"] = "true"
     else:
-        bw = "false"
-    if "a4" in args:
-        a4 = "true"
+        args["bw"] = "false"
+    if "a4" in argsubject:
+        args["a4"] = "true"
     else:
-        a4 = "false"
+        args["a4"] = "false"
 
     # process images and add them to answer
     for part in msg.walk():
         atype, fformat = part.get_content_type().split("/")
         if atype == "image" and (fformat in ["jpeg", "png", "jpg"]):
             open('attachment.' + fformat, 'wb').write(part.get_payload(decode=True))
-            check_call(["python", os.path.abspath("scan.py"), "-i", os.path.abspath("attachment." + fformat), "-b", bw, "-a", a4])
+            args["image"] = 'attachment.' + fformat
+            core.processImage(args)
             img_data = open(os.path.abspath("out.pdf"), 'rb').read()
             image = MIMEImage(img_data, name=os.path.basename("out.pdf"), _subtype="pdf")
             msg.attach(image)
