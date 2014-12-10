@@ -11,6 +11,7 @@ import cv2
 import pylab as plt
 import matplotlib.cm as cm
 import shutil
+import os.path
 
 
 def processImage(args):
@@ -92,10 +93,11 @@ def processImage(args):
 
 	format = str(args["format"])
 	path = str(args["out"])
-	plt.savefig(path + str(args["name"]) + "." + format, format=format, dpi=int(args["dpi"]))
+	filename = str(args["name"]).split(".")[0]
+	plt.savefig(os.path.join(path, filename + "." + format) , format=format, dpi=int(args["dpi"]))
 
 	if args["koriginal"] == "true":
 		orig_path = args["image"]
 		orig_format = orig_path.split(".")[-1]
-		shutil.copyfile(orig_path, path + str(args["name"]) + "." + orig_format )
+		shutil.copyfile(orig_path, os.path.join(path, filename + "." + orig_format))
 

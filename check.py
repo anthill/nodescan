@@ -10,7 +10,7 @@ from email.mime.multipart import MIMEMultipart
 from scanner import core
 
 
-login = json.loads(open("login.json","r").read())
+login = json.loads(open("/home/pi/nodescan/login.json","r").read())
 
 # get unseen mails
 mailer = imaplib.IMAP4_SSL("imap." + login["host"], 993)
@@ -19,12 +19,16 @@ mailer.select('INBOX')
 result, data = mailer.search(None, "(UNSEEN)")
 uids = data[0].split()
 newmails = [mailer.fetch(uids[i], "(RFC822)")[1][0][1] for i in range(len(uids))]
+print "got %s new mails" % str(len(newmails))
 
 for mail in newmails:
     # parse mail and content
     msg = email.message_from_string(mail)
     sender = re.search("<([\w\-][\w\-\.]+@[\w\-][\w\-\.]+[a-zA-Z]{1,4})>", msg["From"]).group(1)
-    subject = msg["Subject"].lower()
+    try:
+        subject = msg["Subject"].lower()
+    except:
+        subject = "bw a4"
 
     # prepare answer
     responseMessage = MIMEMultipart()
@@ -46,6 +50,8 @@ for mail in newmails:
     else:
         args["a4"] = "false"
 
+    print "parsed args"
+
     # process images and add them to answer
     for part in msg.walk():
         atype, fformat = part.get_content_type().split("/")
@@ -57,6 +63,8 @@ for mail in newmails:
             image = MIMEImage(img_data, name=os.path.basename("out.pdf"), _subtype="pdf")
             responseMessage.attach(image)
 
+    print "processImage"
+
     # send mail
     s = smtplib.SMTP("smtp." + login["host"], login["port"])
     s.ehlo()
@@ -66,10 +74,13 @@ for mail in newmails:
     s.sendmail(login["user"], sender, responseMessage.as_string())
     s.quit()
 
+    print "send"
+
     # mark as read
     for e_id in uids:
         mailer.store(e_id, '+FLAGS', '\Seen')
 
+    print "taged as seen"
 
 
 
