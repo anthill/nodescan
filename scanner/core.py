@@ -76,7 +76,7 @@ def processImage(args):
 
 	fig = plt.figure(frameon=False)
 	if str(args["a4"]) == "true":
-		fig.set_size_inches(8.27, 11.69)
+		fig.set_size_inches(11.69, 8.27)
 		ax = plt.Axes(fig, [0., 0., 1., 1.])
 		ax.set_axis_off()
 		fig.add_axes(ax)
